@@ -10,11 +10,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", function (req, res) {
-  fs.readdir(`./files`, function (err, files) {
+app.get('/', function(req, res) {
+  fs.readdir(`./files`, function(err, files) {
+    if (err) files = []; // If no folder or error, return empty array
     res.render("index", { files: files });
   });
 });
+
 app.get("/file/:filename", function (req, res) {
   fs.readFile(
     `./files/${req.params.filename}`,
