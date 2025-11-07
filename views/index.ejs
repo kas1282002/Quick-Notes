@@ -32,9 +32,12 @@
           <% files.forEach(function(val) { %>
             <div class="bg-gray-800 rounded-xl p-5 shadow-lg hover:shadow-blue-500/30 transition-all duration-200">
               <h3 class="text-lg font-semibold mb-2 truncate"><%= val %></h3>
-              <div class="flex justify-between items-center mt-3 text-sm">
-                <a href="/file/<%= val %>" class="text-blue-400 hover:underline">Read More</a>
+              <div class="flex justify-between items-center mt-3 text-sm space-x-3">
+                <a href="/file/<%= val %>" class="text-blue-400 hover:underline">Read</a>
                 <a href="/edit/<%= val %>" class="text-yellow-400 hover:underline">Edit</a>
+                <form action="/delete/<%= val %>" method="POST" onsubmit="return confirmDelete('<%= val %>')">
+                  <button type="submit" class="text-red-500 hover:underline">Delete</button>
+                </form>
               </div>
             </div>
           <% }) %>
@@ -44,5 +47,11 @@
       </div>
     </section>
   </main>
+
+  <script>
+    function confirmDelete(filename) {
+      return confirm(`Are you sure you want to delete "${filename}"?`);
+    }
+  </script>
 </body>
 </html>
