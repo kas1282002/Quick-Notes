@@ -17,9 +17,56 @@
     <% } %>
     <div class="dashboard">
       <aside class="panel composer"><h2 class="panel-title">Create a note</h2><p class="panel-copy">Everything you write is saved to your private notebook.</p><form action="/create" method="post"><div class="field"><label for="title">TITLE</label><input id="title" type="text" name="title" placeholder="Give your note a title" required></div><div class="field"><label for="details">YOUR NOTE</label><textarea id="details" name="details" placeholder="Start writing…" required></textarea></div><button class="primary-button focus:outline-none focus:ring-4 focus:ring-blue-200 focus:ring-offset-2" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Save note</button></form></aside>
-      <section class="notes-section"><div class="notes-heading"><h2>Recent notes</h2><span class="sort-label">Newest first</span></div><div class="notes-grid"><% if (files.length > 0) { %><% files.forEach(function(val) { %><article class="note-card group"><div class="card-top"><span class="card-label">Note</span><span class="card-date">Saved</span></div><h3 title="<%= val %>"><%= val.replace(/\.txt$/, '') %></h3><p class="filename"><%= val %></p><div class="card-actions"><a class="transition-colors" href="/file/<%= encodeURIComponent(val) %>">Open note</a><a class="transition-colors" href="/edit/<%= encodeURIComponent(val) %>">Rename</a><form action="/delete/<%= encodeURIComponent(val) %>" method="POST" onsubmit="return confirmDelete(this.dataset.filename)" data-filename="<%= val %>"><button class="text-button rounded focus:outline-none focus:ring-4 focus:ring-red-100" type="submit">Delete</button></form></div></article><% }) %><% } else { %><div class="empty-state"><div class="empty-icon">+</div><h3>Your notebook is ready.</h3><p>Create your first note using the editor on the left.</p></div><% } %></div></section>
+      <section class="notes-section"><div class="notes-heading"><h2>Recent notes</h2><span class="sort-label">Newest first</span></div><div class="notes-grid"><% if (files.length > 0) { %><% files.forEach(function(val) { %><article class="note-card group"><div class="card-top"><span class="card-label">Note</span><span class="card-date">Saved</span></div><h3 title="<%= val %>"><%= val.replace(/\.txt$/, '') %></h3><p class="filename"><%= val %></p><div class="card-actions"><a class="transition-colors" href="/file/<%= encodeURIComponent(val) %>">Open note</a><a class="transition-colors" href="/edit/<%= encodeURIComponent(val) %>">Rename</a><form action="/delete/<%= encodeURIComponent(val) %>" method="POST" data-delete-form data-filename="<%= val %>"><button class="text-button rounded focus:outline-none focus:ring-4 focus:ring-red-100" type="button" data-delete-trigger>Delete</button></form></div></article><% }) %><% } else { %><div class="empty-state"><div class="empty-icon">+</div><h3>Your notebook is ready.</h3><p>Create your first note using the editor on the left.</p></div><% } %></div></section>
     </div>
   </main>
-  <script>function confirmDelete(filename) { return confirm(`Delete “${filename}”? This cannot be undone.`); }</script>
+  <div id="delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="absolute inset-0 bg-slate-950/45 backdrop-blur-sm" data-modal-close></div>
+    <section class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-7">
+      <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-xl font-bold text-red-600" aria-hidden="true">!</div>
+      <h2 id="delete-modal-title" class="mb-2 text-xl font-bold tracking-tight text-slate-900">Delete this note?</h2>
+      <p class="m-0 text-sm leading-6 text-slate-600">You are about to permanently delete <strong id="delete-note-name" class="font-semibold text-slate-800"></strong>. This action cannot be undone.</p>
+      <div class="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button id="cancel-delete" class="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100" type="button">Cancel</button>
+        <button id="confirm-delete" class="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-200" type="button">Delete note</button>
+      </div>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const modal = document.getElementById("delete-modal");
+      const noteName = document.getElementById("delete-note-name");
+      const confirmButton = document.getElementById("confirm-delete");
+      const cancelButton = document.getElementById("cancel-delete");
+      let activeForm = null;
+      let activeTrigger = null;
+
+      function closeModal() {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        if (activeTrigger) activeTrigger.focus();
+      }
+
+      document.querySelectorAll("[data-delete-trigger]").forEach((trigger) => {
+        trigger.addEventListener("click", () => {
+          activeForm = trigger.closest("[data-delete-form]");
+          activeTrigger = trigger;
+          noteName.textContent = activeForm.dataset.filename;
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          cancelButton.focus();
+        });
+      });
+
+      confirmButton.addEventListener("click", () => {
+        if (activeForm) activeForm.submit();
+      });
+      cancelButton.addEventListener("click", closeModal);
+      modal.querySelector("[data-modal-close]").addEventListener("click", closeModal);
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.classList.contains("hidden")) closeModal();
+      });
+    })();
+  </script>
 </body>
 </html>
