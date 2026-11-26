@@ -8,6 +8,10 @@ app.set("views", path.join(__dirname, "views"));
 
 const filesDirectory = path.join(__dirname, "files");
 
+// Git does not retain empty folders. Create the notes directory when the
+// service starts so a freshly deployed app can save its first note.
+fs.mkdirSync(filesDirectory, { recursive: true });
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -41,7 +45,21 @@ app.post("/edit", function (req, res) {
 
 // Create New File
 app.post("/create", function (req, res) {
-  fs.writeFile(path.join(filesDirectory, `${req.body.title.split(" ").join("")}.txt`), req.body.details, function (err) {
+  const title = (req.body.title || "").trim();
+  const details = req.body.details || "";
+  const safeTitle = title
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, "")
+    .replace(/\s+/g, "-");
+
+  if (!safeTitle || !details.trim()) {
+    return res.status(400).send("A title and note are required.");
+  }
+
+  fs.writeFile(path.join(filesDirectory, `${safeTitle}.txt`), details, "utf-8", function (err) {
+    if (err) {
+      console.error("Unable to save note:", err);
+      return res.status(500).send("Unable to save the note. Please try again.");
+    }
     res.redirect("/");
   });
 });
