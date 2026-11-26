@@ -1,0 +1,9 @@
+{
+  "name": "quick-notes-launcher",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node ./Quick-Notes-main/index.js",
+    "start": "node ./Quick-Notes-main/index.js"
+  }
+}
