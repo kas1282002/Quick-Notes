@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rename note — Quick Notes</title><link rel="stylesheet" href="/styles.css"></head>
-<body>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rename note — Quick Notes</title><link rel="stylesheet" href="/styles.css"><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="antialiased">
   <header class="topbar"><div class="topbar-inner"><a class="brand" href="/"><span class="brand-mark">Q</span><span>Quick Notes</span></a><span class="topbar-note">Your personal workspace</span></div></header>
   <main class="content-shell"><a class="back-link" href="/"><span>&larr;</span> Back to all notes</a><form class="panel rename-card" action="/edit" method="post"><p class="eyebrow">Organize your notebook</p><h1>Rename note</h1><p class="panel-copy">Choose a clear title so your note is easier to find later.</p><div class="field"><label for="previous">CURRENT FILE NAME</label><input class="readonly" id="previous" type="text" name="previous" value="<%= filename %>" readonly></div><div class="field"><label for="new">NEW FILE NAME</label><input id="new" type="text" name="new" placeholder="e.g. project-ideas.txt" required autofocus><p class="help">Add <strong>.txt</strong> at the end to keep the standard note format.</p></div><div class="form-actions"><button class="primary-button" type="submit">Save changes</button><a class="cancel" href="/">Cancel</a></div></form></main>
 </body>

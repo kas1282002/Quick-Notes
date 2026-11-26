@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title><%= filename.replace(/\.txt$/, '') %> — Quick Notes</title><link rel="stylesheet" href="/styles.css"></head>
-<body>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title><%= filename.replace(/\.txt$/, '') %> — Quick Notes</title><link rel="stylesheet" href="/styles.css"><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="antialiased">
   <header class="topbar"><div class="topbar-inner"><a class="brand" href="/"><span class="brand-mark">Q</span><span>Quick Notes</span></a><span class="topbar-note">Your personal workspace</span></div></header>
   <main class="content-shell"><a class="back-link" href="/"><span>&larr;</span> Back to all notes</a><article class="document"><p class="document-meta">Saved note</p><h1><%= filename.replace(/\.txt$/, '') %></h1><div class="document-body"><%= filedata %></div></article></main>
 </body>
